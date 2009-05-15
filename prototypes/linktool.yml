@@ -1,0 +1,197 @@
+models: 
+  category: 
+    associations: 
+    - link_partners: has_many
+    - mail_templates: has_many
+    - link_partners: has_many
+    - link_partners: has_many
+      options: 
+        through: link_partners
+    - options: 
+        through: link_partners
+      webmasters: has_many
+    - link_partners: has_many
+      options: 
+        through: link_partners
+    - options: 
+        through: link_partners
+      webmasters: has_many
+    attributes: 
+    - name: string
+  customer: 
+    associations: 
+    - orders: has_many
+    - notes: has_many
+    - lp_requests: has_many
+      options: 
+        through: notes
+    - link_partners: has_many
+      options: 
+        through: notes
+    - options: 
+        through: notes
+      users: has_many
+    - link_partners: has_many
+      options: 
+        through: notes
+    attributes: 
+    - name: domain
+    - email: email
+  link_partner: 
+    associations: 
+    - link_partner_order_members: has_many
+    - subdomains: has_many
+    - category: belongs_to
+    - mail_template: belongs_to
+    - lp_requests: has_many
+    - notes: has_many
+    - category: belongs_to
+    - webmaster: belongs_to
+    - notes: has_many
+    - options: 
+        through: link_partner_order_members
+      orders: has_many
+    - options: 
+        through: subdomains
+      webmasters: has_many
+    - options: 
+        through: lp_requests
+      users: has_many
+    - lp_requests: has_many
+      options: 
+        through: notes
+    - customers: has_many
+      options: 
+        through: notes
+    - options: 
+        through: notes
+      users: has_many
+    - lp_requests: has_many
+      options: 
+        through: notes
+    - customers: has_many
+      options: 
+        through: notes
+    - options: 
+        through: notes
+      users: has_many
+    attributes: 
+    - domain: domain
+    - title: string
+    - description: text
+    - page_rank: integer
+  link_partner_order_member: 
+    associations: 
+    - order: belongs_to
+    - link_partner: belongs_to
+    attributes: 
+    - status: integer
+  lp_request: 
+    associations: 
+    - link_partner: belongs_to
+    - notes: has_many
+    - user: belongs_to
+    - customers: has_many
+      options: 
+        through: notes
+    - link_partners: has_many
+      options: 
+        through: notes
+    - options: 
+        through: notes
+      users: has_many
+    - link_partners: has_many
+      options: 
+        through: notes
+    attributes: 
+    - status: integer
+    - email_body: text
+    - response: text
+  mail_template: 
+    associations: 
+    - link_partner: belongs_to
+    - category: belongs_to
+    attributes: 
+    - body: text
+    - subject: string
+    - title: string
+    - email_method: integer
+  note: 
+    associations: 
+    - lp_request: belongs_to
+    - customer: belongs_to
+    - link_partner: belongs_to
+    - user: belongs_to
+    - link_partner: belongs_to
+    attributes: 
+    - body: text
+  order: 
+    associations: 
+    - customer: belongs_to
+    - link_partner_order_members: has_many
+    - link_partners: has_many
+      options: 
+        through: link_partner_order_members
+    attributes: 
+    - hours_needed: integer
+    - links_needed: integer
+    - alias: string
+    - status: integer
+    - email_from: integer
+    - email_method: integer
+    - success_percentage: integer
+    - landings_page: url
+    - search_keyword: string
+    - link_keyword: string
+  role: 
+    associations: 
+    - users: has_many
+    attributes: 
+    - name: string
+  subdomain: 
+    associations: 
+    - link_partner: belongs_to
+    - webmaster: belongs_to
+    attributes: 
+    - url: url
+  user: 
+    associations: 
+    - notes: has_many
+    - lp_requests: has_many
+    - role: belongs_to
+    - lp_requests: has_many
+      options: 
+        through: notes
+    - customers: has_many
+      options: 
+        through: notes
+    - link_partners: has_many
+      options: 
+        through: notes
+    - link_partners: has_many
+      options: 
+        through: notes
+    - link_partners: has_many
+      options: 
+        through: lp_requests
+    attributes: 
+    - password: string
+    - email: email
+    - firstname: string
+    - lastname: string
+    - time_worked: string
+  webmaster: 
+    associations: 
+    - subdomains: has_many
+    - link_partners: has_many
+    - link_partners: has_many
+      options: 
+        through: subdomains
+    - categories: has_many
+      options: 
+        through: link_partners
+    - categories: has_many
+      options: 
+        through: link_partners
+    attributes: 
+    - email: email

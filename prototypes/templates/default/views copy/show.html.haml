@@ -1,0 +1,14 @@
+%h1= t ".title"
+
+%div[current_object]
+<% for attribute in attributes -%>
+  %p.<%= attribute.name %>
+    %strong <%= attribute.name %>
+    = h current_object.<%= attribute.name %>
+<% end -%>
+
+= link_to t(".link_to_edit"), edit_<%= singular_name %>_path
+|
+= link_to t(".link_to_destroy"),<%= singular_name %>_path, :confirm => t(".show.destroy_confirmation"), :method => :delete
+|
+= link_to t(".link_to_index"),<%= plural_name %>_path
