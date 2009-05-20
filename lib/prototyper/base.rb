@@ -22,7 +22,7 @@ module Prototyper
     
     def self.init
       # Run migrations before others so that tables are present before defining active records classes
-      Migrator.reinstall
+      Migrator.reinstall if prototype_definition_changed?
 
       prototypes.each do |prototype|
         begin

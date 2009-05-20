@@ -3,6 +3,10 @@ Prototyper
 
 Introduction goes here.
 
+Installation
+
+# Prototyper should be loaded last in environment.rb
+
 
 Example
 =======

@@ -48,7 +48,7 @@ module Prototyper
         if options[:real_template]
           template_path
         else
-          template_path.gsub('_object', singular_partial_name)
+          template_path && template_path.gsub('_object', singular_partial_name)
         end
       end
 

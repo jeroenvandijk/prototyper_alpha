@@ -2,10 +2,11 @@ module Prototyper
   module Reader
     def read(path)
       prototypes_definition = YAML::load_file(path)
-      load_prototypes(prototypes_definition)
+      load(prototypes_definition)
     end
     
     def load(hash)
+      compare_with_previous(hash)
       load_prototypes(hash)
     end
     
@@ -30,6 +31,25 @@ module Prototyper
 
       prototypes
     end
-
+    
+    # TODO test this and do a smarter comparision
+    def compare_with_previous(definition)
+      previous_path = File.join(RAILS_ROOT, "app/prototypes", ".previous_definition.yml")
+      
+      begin
+        @prototype_definition_has_changed = YAML::load_file(previous_path) != definition
+      rescue
+        @prototype_definition_has_changed = true
+      end
+      
+      if prototype_definition_changed?
+        File.open(previous_path, 'w') {|f| f.write(definition.to_yaml) }
+      end
+    end
+    
+    def prototype_definition_changed?
+      @prototype_definition_has_changed
+    end
+    
   end
 end
