@@ -5,4 +5,6 @@
     = f.label :<%= attribute.name %>
     = f.text_field :<%= attribute.name %>
   <% end -%>
-  %p= f.submit t(".save")
+  %p
+    = f.submit t(".save")
+    = link_to t(".cancel"), :back, :class => "cancel"

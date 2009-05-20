@@ -7,8 +7,8 @@
     = h current_object.<%= attribute.name %>
 <% end -%>
 
-= link_to t(".link_to_edit"), edit_<%= singular_name %>_path
+%a.link_to_edit{ :href => edit_<%= singular_name %>_path }= t(".link_to_edit")
 |
-= link_to t(".link_to_destroy"),<%= singular_name %>_path, :confirm => t(".show.destroy_confirmation"), :method => :delete
+= link_to t(".link_to_destroy"),<%= singular_name %>_path, :confirm => t(".confirm_destroy"), :method => :delete, :class => "link_to_destroy"
 |
-= link_to t(".link_to_index"),<%= plural_name %>_path
+%a.link_to_index{ :href => <%= plural_name %>_path }= t(".link_to_index")

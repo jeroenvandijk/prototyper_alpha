@@ -5,4 +5,4 @@
     %th attribute_names
   = render @<%= plural_name %>
 
-= link_to t(".link_to_new"), new_<%= singular_name %>_path
+%a.link_to_new{ :href => new_<%= singular_name %>_path }= t(".link_to_new")
