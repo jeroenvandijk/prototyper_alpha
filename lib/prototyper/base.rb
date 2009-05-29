@@ -20,15 +20,40 @@ module Prototyper
       @@prototypes ||= read File.join(RAILS_ROOT, "app/prototypes", "linktool.yml")
     end
     
+    def self.cleanup_prototypes
+      prototypes.each do |prototype|
+        Object.instance_eval{ remove_const(prototype.controller_name) }
+        Object.instance_eval{ remove_const(prototype.class_name) }
+      end
+    end
+    
     def self.init
+      RAILS_DEFAULT_LOGGER.info "="*100
+      RAILS_DEFAULT_LOGGER.info " Initializing prototype plugin"
+      RAILS_DEFAULT_LOGGER.info "="*100
+      prototypes #trigger to load everything
+            
       # Run migrations before others so that tables are present before defining active records classes
-      Migrator.reinstall if prototype_definition_changed?
-
+      Migrator.reinstall if prototypes_definition_changed?
+    end
+    
+    def self.init_models
+      eval_for_each_prototype do |prototype|
+        run_template(:model, prototype.to_locals)
+      end
+    end
+    
+    # Controllers need a special treatment since helpers are added on each request
+    def self.init_controllers
+      eval_for_each_prototype do |prototype|
+        run_template(:controller,  prototype.to_locals)
+      end
+    end
+    
+    def self.eval_for_each_prototype
       prototypes.each do |prototype|
         begin
-          locals = prototype.to_locals
-          run_template(:model, locals)
-          run_template(:controller, locals)
+          yield(prototype)
         rescue StandardError => e
           raise "The following error for prototype '#{prototype.name}' has occured: #{e}"
         end

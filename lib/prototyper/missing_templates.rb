@@ -10,7 +10,8 @@ module Prototyper
       # Returns nil if no suitable template exist
       def template_path_for(template_path)
         resource, found_template = resource_and_found_template(template_path)
-        if found_template
+                
+        if found_template && find_prototype_for(resource)
           File.join(resource, found_template)
         else
           nil
@@ -18,8 +19,8 @@ module Prototyper
       end
       
       def template_for(template_path)
-        resource, found_template = resource_and_found_template(template_path, :real_template => true)
-        render_view_template(found_template, find_prototype_for(resource).to_locals)
+        resource, found_template = resource_and_found_template template_path, :real_template => true
+        render_view_template found_template, find_prototype_for(resource).to_locals
       end
 
       private

@@ -1,3 +1,0 @@
-describe "locals" do
-  
-end

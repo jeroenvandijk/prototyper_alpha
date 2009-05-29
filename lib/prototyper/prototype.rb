@@ -1,13 +1,41 @@
 module Prototyper
   class Prototype
-    attr_reader :name, :namespaces
+
+    ACCESSORS = [ :name, 
+                  :namespaces,
+                  :controller_class_path,
+                  :controller_file_name,
+                  :controller_class_name,
+                  :required_attributes,
+                  :class_name,
+                  :singular_name,
+                  :plural_name,
+                  :class_path,
+                  :associations,
+                  :parent_names,
+                  :attributes ]
+
+    attr_reader *ACCESSORS
 
     def initialize(name, properties = {}, options = {})
-      @name = (name == name.pluralize ? name.singularize : name)
+      @namespaces   = options['namespaces']      || []
       @raw_attributes   = properties['attributes']   || []
       @raw_associations = properties['associations'] || []
-      @namespaces   = options['namespaces']      || []
+
+      # inflections
+      @singular_name = @name = (name == name.pluralize ? name.singularize : name)
+      @plural_name = singular_name.pluralize
+
+      @class_path = ""
+      @file_name = @singular_name
+      @controller_file_name = @plural_name
+      @controller_class_path = namespaces.join("/")
+      @class_name = [@controller_class_path, @singular_name].reject{|x| x.blank? }.join("/").camelize
+      @controller_class_name = @class_name.pluralize
+      @required_attributes = []
     end
+
+
 
     # Returns all the attributes
     def attributes
@@ -36,20 +64,11 @@ module Prototyper
     # Returns a hash with variable mappings (name-value) that can be assigned to templates
     # The assigned locals are compatible with locals in Rails scaffold templates.
     def to_locals
-      return @to_locals if @to_locals
-      
-      @to_locals = {
-        # Support of rails templates
-        :singular_name => name.singularize,
-        :plural_name => name.pluralize,
-        :attributes => attributes,
-        # Extended
-        :parent_names => parent_names,
-        :associations => associations,
-        :required_attributes => [],
-        # GLOBALS
-        :NATIVE_ATTRIBUTE_TYPES => self.class.native_attribute_types
-      }
+      @to_locals ||= ACCESSORS.inject({}) { |result, field| result[field] = self.send(field); result }
+    end
+    
+    def controller_name
+      "#{controller_class_name}Controller"
     end
     
     # TODO get from active record
@@ -65,9 +84,13 @@ module Prototyper
       end
       
       def type
-        return meta_type if Prototype.native_attribute_types.include?(meta_type)
+        return meta_type if native?
         # TODO Do something smart when the meta type isn't the same as native and a String isn't enough
         "string"
+      end
+      
+      def native?
+        Prototype.native_attribute_types.include?(meta_type)
       end
     end
     

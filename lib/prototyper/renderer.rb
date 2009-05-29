@@ -26,12 +26,13 @@ module Prototyper
       end
       
       # TODO move this to a configuration place?
-      def eval_template_helpers(binding)
+      def eval_template_helpers(temporary_binding)
         unless @helper_code
           helper_path = "app/prototypes/helpers.rb"
           @helper_code = read_file (helper_path, :raise => true)
         end
-        eval(@helper_code, binding)
+        
+        eval(@helper_code, temporary_binding)
       end
 
       # Copy from the rails generator, with a helpers extension
