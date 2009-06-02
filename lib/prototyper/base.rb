@@ -43,6 +43,16 @@ module Prototyper
       end
     end
     
+    def self.init_controller(name)
+      prototype = find_prototype_for(name)      
+      run_template(:controller,  prototype.to_locals)
+    end
+    
+    def self.init_model(name)
+      prototype = find_prototype_for(name)      
+      run_template(:model,  prototype.to_locals)
+    end
+    
     # Controllers need a special treatment since helpers are added on each request
     def self.init_controllers
       eval_for_each_prototype do |prototype|

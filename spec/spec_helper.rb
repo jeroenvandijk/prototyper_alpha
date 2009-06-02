@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'actionmailer'
 require 'spec'
+require File.expand_path(File.dirname(__FILE__) + '/../lib/const_missing.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../lib/i18n_hack.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../lib/prototyper/base.rb')
  
