@@ -1,6 +1,6 @@
 require 'erb'
 
-%w(missing_templates prototype reader renderer).each do |file|
+%w(missing_templates prototype reader renderer attribute association).each do |file|
   require File.expand_path(File.join(File.dirname(__FILE__) + "/#{file}"))
 end
 
@@ -9,6 +9,9 @@ module Prototyper
     include MissingTemplates
     include Renderer
     extend Reader
+    
+    # Keeps track of all defined_prototypes so they can be destroyed when necessary
+    @@defined_prototypes = []
     
     def self.rendered_template_for(resource, template)
       locals = find_prototype_for(resource).to_locals
@@ -20,11 +23,17 @@ module Prototyper
       @@prototypes ||= read File.join(RAILS_ROOT, "app/prototypes", "linktool.yml")
     end
     
+    def self.previous_prototypes
+      @@previous_prototypes ||= load_previous
+    end
+    
     def self.cleanup_prototypes
-      prototypes.each do |prototype|
-        Object.instance_eval{ remove_const(prototype.controller_name) }
-        Object.instance_eval{ remove_const(prototype.class_name) }
+      # raise @@defined_prototypes.inspect
+      @@defined_prototypes.each do |class_name|
+        Object.instance_eval{ remove_const(class_name) if Object.const_defined?(class_name) }
       end
+      
+      @@defined_prototypes = []
     end
     
     def self.init
@@ -34,65 +43,31 @@ module Prototyper
       prototypes #trigger to load everything
             
       # Run migrations before others so that tables are present before defining active records classes
-      Migrator.reinstall if prototypes_definition_changed?
+      Migrator.reinstall #if prototypes_definition_changed?
     end
     
-    def self.init_models
-      eval_for_each_prototype do |prototype|
-        run_template(:model, prototype.to_locals)
-      end
+    def self.has_definition_for?(name)
+      !!find_prototype_for(extract_prototype_name(name))
     end
     
-    def self.init_controller(name)
-      prototype = find_prototype_for(name)      
-      run_template(:controller,  prototype.to_locals)
-    end
     
-    def self.init_model(name)
-      prototype = find_prototype_for(name)      
-      run_template(:model,  prototype.to_locals)
-    end
-    
-    # Controllers need a special treatment since helpers are added on each request
-    def self.init_controllers
-      eval_for_each_prototype do |prototype|
-        run_template(:controller,  prototype.to_locals)
-      end
-    end
-    
-    def self.eval_for_each_prototype
-      prototypes.each do |prototype|
+    def self.define(name)      
+      prototype = find_prototype_for(extract_prototype_name(name))
+      
+      if prototype
+        template = name.to_s.slice("Controller") ? :controller : :model
+
         begin
-          yield(prototype)
+          run_template(template, prototype.to_locals)
         rescue StandardError => e
-          raise "The following error for prototype '#{prototype.name}' has occured: #{e}"
+          raise "The following error for #{template} prototype '#{prototype.name}' has occured: #{e}"
         end
+
+        @@defined_prototypes << name
+        name.to_s.constantize
       end
     end
 
-    # Deprecated
-    # def self.load(model_definition)
-    #   @@prototypes = model_definition
-    # 
-    #   
-    #   prototypes.each_pair do |name, fields| 
-    #     locals = {
-    #       :singular_name => name,
-    #       :plural_name => name.pluralize
-    #     }
-    # 
-    #     run_template(:model, locals)
-    #     run_template(:controller, locals)
-    #   end
-    #   
-    #   Migrator.reinstall
-    #   add_routes
-    # end
-    
-    def self.unload(model_definition)
-      Migrator.uninstall
-    end
-    
     def self.find_prototype_for(resource_name)
       prototypes.find { |p| p.name == resource_name.to_s.singularize }
     end
@@ -112,9 +87,15 @@ module Prototyper
 
     
     private
-      def self.prototype_names
-        @names ||= prototypes.map(&:name)
-      end
+
+    def self.prototype_names
+      @names ||= prototypes.map(&:name)
+    end
+
+    def self.extract_prototype_name(name)
+      class_name = name.to_s.dup
+      class_name.gsub("Controller", '').singularize.underscore
+    end
     
     
   end  

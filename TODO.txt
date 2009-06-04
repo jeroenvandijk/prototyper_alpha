@@ -1,0 +1,4 @@
+- Full feature definition
+- Make a plugin out of this gem
+- Full test coverage
+- Validator of yaml model definitions

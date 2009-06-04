@@ -15,7 +15,7 @@ module Prototyper
   
     class PrototypesMigration < ActiveRecord::Migration
       class << self
-        delegate :prototypes, :to => Prototyper::Base
+        delegate :prototypes, :previous_prototypes, :to => Base
       end
       
       # TODO make the migration code reusable for export of features
@@ -35,7 +35,7 @@ module Prototyper
       end
 
       def self.down
-        prototypes.each do |prototype|
+        previous_prototypes.each do |prototype|
           table_name = prototype.name.tableize
           drop_table(table_name) if table_exists?(table_name)
         end

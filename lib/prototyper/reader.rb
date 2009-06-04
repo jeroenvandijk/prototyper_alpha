@@ -14,6 +14,10 @@ module Prototyper
       prototypes
     end
     
+    def load_previous
+      load_prototypes(previous_prototypes_definition)
+    end
+    
     def prototypes_definition_changed?
       # prototypes_definition.diff(previous_prototypes_definition)
       prototypes_definition != previous_prototypes_definition

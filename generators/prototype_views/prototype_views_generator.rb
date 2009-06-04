@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), '../../lib/prototyper/generator')
 
-class PrototypeExportGenerator < Rails::Generator::NamedBase
+class PrototypeViewsGenerator < Rails::Generator::NamedBase
   attr_reader :prototype
   delegate *Prototyper::Prototype::ACCESSORS << { :to => :prototype }
 

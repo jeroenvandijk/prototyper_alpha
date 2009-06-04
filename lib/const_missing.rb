@@ -11,9 +11,9 @@ module ConstMissingExtension
       rescue NameError
         raise unless Prototyper::Base.has_definition_for?(name)
       end
-
-      klass ||= Prototyper::Base.define(name) if Prototyper::Base.has_definition_for?(name)
       
+      klass = Prototyper::Base.define(name) if Prototyper::Base.has_definition_for?(name)
+
       klass
     end
   end

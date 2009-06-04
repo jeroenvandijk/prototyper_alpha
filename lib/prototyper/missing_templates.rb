@@ -36,7 +36,7 @@ module Prototyper
       end
 
       def find_template_path(resource, template_name, options = {})
-        tmp_template_name = template_name.dup
+        tmp_template_name = template_name.to_s.dup
         
         # Handle the special case of a partial that has the name of the resource
         singular_partial_name = "_#{resource.singularize}"
