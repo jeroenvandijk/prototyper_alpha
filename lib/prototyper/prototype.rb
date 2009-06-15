@@ -51,7 +51,7 @@ module Prototyper
     
     # Returns the names of the parent resources
     def parent_names
-      @parent_names ||= associations.select{|x| x.parent?}.map(&:name)
+      @parent_names ||= associations.select{|x| x.parent?}.map{|x| x.name.singularize}
     end
     
     # Returns the names of the child resources

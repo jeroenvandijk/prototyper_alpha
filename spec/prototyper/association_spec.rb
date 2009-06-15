@@ -34,7 +34,7 @@ describe Prototyper::Association do
     end
     
     it "should return a valid options string" do
-      subject.options_string.should eql %{, :as => "other_users", :through => "memberships"}
+      eval("{:dummy_to_use_the_comma => 1 #{subject.options_string}}").should == {:dummy_to_use_the_comma => 1, :as => :other_users, :through => :memberships}
     end
   end
   
@@ -52,5 +52,49 @@ describe Prototyper::Association do
     subject { @base.new(@association.merge('as' => 'other_users', 'invalid' => 'option')) }
     specify { proc{ subject }.should raise_error }    
   end  
+  
+  describe "#child?" do    
+    it "should return true with has_many" do
+      assoc = @base.new('has_many' => 'users')
+      assoc.child?.should == true
+    end
+    
+    it "should return true with has_one" do
+      assoc = @base.new('has_one' => 'user')
+      assoc.child?.should == true
+    end
+    
+    it "should return true with has_and_belongs_to_many" do
+      assoc = @base.new('has_and_belongs_to_many' => 'users')
+      assoc.child?.should == true
+    end
+  end
+  
+  describe "#parent?" do    
+    it "should return false with has_many without options" do
+      assoc = @base.new('has_many' => 'users')
+      assoc.parent?.should == false
+    end
+    
+    it "should return true with has_many :through" do
+      assoc = @base.new('has_many' => 'users', 'through' => 'foo')
+      assoc.parent?.should == true
+    end
+    
+    it "should return false with has_one" do
+      assoc = @base.new('has_one' => 'user')
+      assoc.parent?.should == false
+    end
+    
+    it "should return true with belongs_to" do
+      assoc = @base.new('belongs_to' => 'user')
+      assoc.parent?.should == true
+    end
+    
+    it "should return true with has_and_belongs_to_many" do
+      assoc = @base.new('has_and_belongs_to_many' => 'users')
+      assoc.parent?.should == true
+    end
+  end
   
 end

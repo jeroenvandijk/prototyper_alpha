@@ -23,5 +23,11 @@ describe Prototyper::Prototype do
   end
   
   
+  it "#parent_names should return singular names" do
+    prototype = @base.new("Dummy", { 'associations' => { 'has_and_belongs_to_many' => 'users'} })
+    prototype.parent_names.should == ['user']
+  end
+  
+  
   
 end

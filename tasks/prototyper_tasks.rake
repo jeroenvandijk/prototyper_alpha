@@ -6,6 +6,13 @@ namespace :prototyper do
     puts Prototyper::Base.rendered_template_for(args.resource, args.path)
   end
   
+  desc "Runs migrations for the prototypes"
+  task :migrate => :environment do
+    Prototyper::Migrator.reinstall
+    
+    puts "Ran migrations for environment #{RAILS_ENV}"
+  end
+  
   
   
   

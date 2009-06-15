@@ -41,9 +41,11 @@ module Prototyper
       RAILS_DEFAULT_LOGGER.info " Initializing prototype plugin"
       RAILS_DEFAULT_LOGGER.info "="*100
       prototypes #trigger to load everything
+
+      ActionController::Routing::RouteSet::Mapper.send :include, Routes
             
       # Run migrations before others so that tables are present before defining active records classes
-      Migrator.reinstall #if prototypes_definition_changed?
+      Migrator.reinstall if prototypes_definition_changed?
     end
     
     def self.has_definition_for?(name)
