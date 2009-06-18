@@ -37,9 +37,6 @@ module Prototyper
     end
     
     def self.init
-      RAILS_DEFAULT_LOGGER.info "="*100
-      RAILS_DEFAULT_LOGGER.info " Initializing prototype plugin"
-      RAILS_DEFAULT_LOGGER.info "="*100
       prototypes #trigger to load everything
 
       ActionController::Routing::RouteSet::Mapper.send :include, Routes
@@ -52,12 +49,22 @@ module Prototyper
       !!find_prototype_for(extract_prototype_name(name))
     end
     
-    
-    def self.define(name)      
-      prototype = find_prototype_for(extract_prototype_name(name))
+    # Used when config.cache_classes is true
+    def self.define_classes
+      prototypes.each do |prototype|
+        if ActiveRecord::Migration.table_exists?(prototype.plural_name) # to prevent error when migrating from zero
+          define(:type => :model, :for => prototype)
+          define(:type => :controller, :for => prototype)
+        end
+      end
       
+    end
+    
+    def self.define(options = {})      
+      prototype = options[:for] || find_prototype_for(extract_prototype_name(options[:class]))
+
       if prototype
-        template = name.to_s.slice("Controller") ? :controller : :model
+        template = options[:type] || (options[:class].to_s.slice("Controller") ? :controller : :model)
 
         begin
           run_template(template, prototype.to_locals)
@@ -65,8 +72,10 @@ module Prototyper
           raise "The following error for #{template} prototype '#{prototype.name}' has occured: #{e}"
         end
 
-        @@defined_prototypes << name
-        name.to_s.constantize
+        if options[:class]
+          @@defined_prototypes << options[:class]
+          options[:class].to_s.constantize
+        end
       end
     end
 

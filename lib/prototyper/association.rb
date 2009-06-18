@@ -2,10 +2,12 @@ module Prototyper
   class Association
     attr_reader :name, :type, :options
 
-    VALID_OPTIONS = %w(as through)
+    SYMBOL_OPTIONS = %w(as through)
+    OTHER_OPTIONS = %W(polymorphic)
+    OPTIONS = SYMBOL_OPTIONS + OTHER_OPTIONS
   
     def initialize(hash)
-      @options = hash.reject { |option, _| !VALID_OPTIONS.include? option }
+      @options = hash.reject { |option, _| !OPTIONS.include? option }
       
       pair = (hash.to_a - @options.to_a).flatten
 
@@ -25,7 +27,7 @@ module Prototyper
 
     # Returns the options as symbols without the '{}' parentheses
     def options_string
-      VALID_OPTIONS.each {|key| @options[key] = @options[key].to_sym if @options[key] }
+      SYMBOL_OPTIONS.each {|key| @options[key] = @options[key].to_sym if @options[key] }
       ", " + options.symbolize_keys.inspect[1..-2].gsub('=>', ' => ') unless options.empty?
     end
   end

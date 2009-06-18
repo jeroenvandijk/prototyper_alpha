@@ -32,12 +32,14 @@ describe Prototyper::Base do
         @base.stubs(:prototypes => [@prototype])
       end
       # Following specs test whether a class is defined. There is probably a better way
-      it "should return a class named 'Example'" do
-        @base.define('Example').to_s.should eql "Example"
+      it "should define a class named 'Example'" do
+        @base.define(:class => 'Example')
+        proc{ Example }.should_not raise_error
       end
       
-      it "should return a class named 'ExamplesController'" do
-        @base.define('ExamplesController').to_s.should eql "ExamplesController"
+      it "should define a class named 'ExamplesController'" do
+        @base.define(:class => 'ExamplesController')
+        proc{ ExamplesController }.should_not raise_error
       end
       
       it "should return nil for 'another_example'" do

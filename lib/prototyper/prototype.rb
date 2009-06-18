@@ -22,6 +22,9 @@ module Prototyper
       @raw_attributes   = properties['attributes']   || []
       @raw_associations = properties['associations'] || []
 
+      raise "The property 'attributes' for prototype #{name} should be an array" unless @raw_attributes.is_a? Array
+      raise "The property 'associations' for prototype #{name} should be an array" unless @raw_associations.is_a? Array
+
       # inflections
       @singular_name = @name = (name == name.pluralize ? name.singularize : name)
       @plural_name = singular_name.pluralize
