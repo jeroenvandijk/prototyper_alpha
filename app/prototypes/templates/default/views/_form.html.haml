@@ -1,10 +1,7 @@
-- form_for <%= singular_name %> do |f|
+- form_for [parent_object, <%= singular_name %>] do |f|
+  / = raise parent_object.inspect
   = f.error_messages
-  <%- for attribute in attributes -%>
-  %p
-    = f.label :<%= attribute.name %>
-    = f.text_field :<%= attribute.name %>
-  <% end -%>
+  = render :partial => 'form_fields', :locals => {:f => f}
   %p
     = f.submit t(".save")
     = link_to t(".cancel"), :back, :class => "cancel"

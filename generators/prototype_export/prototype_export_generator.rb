@@ -1,6 +1,8 @@
 require File.join(File.dirname(__FILE__), '../../lib/prototyper/generator')
 
 class PrototypeExportGenerator < Rails::Generator::NamedBase
+  # default_options :collision => :ask, :quiet => false
+  
   attr_reader :prototype
   delegate *Prototyper::Prototype::ACCESSORS << { :to => :prototype }
 
@@ -9,20 +11,11 @@ class PrototypeExportGenerator < Rails::Generator::NamedBase
     
     @prototype = Prototyper::Base.find_prototype_for(prototype_name)
     raise "Couldn't find prototype '#{prototype_name}'" unless @prototype || prototype_name.blank?
-    
+
     # Include template helpers
     Prototyper::Base.eval_template_helpers(binding)
-    
+
     super
-  end
-  
-  def add_options!(opt)
-    opt.separator ''
-    opt.separator 'Options:'
-    opt.on("--except=templates", String,
-           "Create all templates except these (seperate by comma's)") { |v| options[:except] = v.split(',') }
-    opt.on("--only=templates", String,
-           "Create only these templates (seperate by comma's)") { |v| options[:only] = v.split(',') }
   end
   
   def should_generate?(template)
@@ -70,6 +63,8 @@ class PrototypeExportGenerator < Rails::Generator::NamedBase
     
       # Reuse Cucumbers feature template
       m.dependency "feature", [singular_name] + attributes.map{|x| "#{x.name}:#{x.type}"} if should_generate?(:feature)
+
+      
     end
   end
     
@@ -87,6 +82,17 @@ class PrototypeExportGenerator < Rails::Generator::NamedBase
   
   def template_path
     File.join("app", "prototypes", "templates", "default")
+  end
+
+  protected
+
+  def add_options!(opt)
+    opt.separator ''
+    opt.separator 'Options:'
+    opt.on("--except=templates", String,
+           "Create all templates except these (seperate by comma's)") { |v| options[:except] = v.split(',') }
+    opt.on("--only=templates", String,
+           "Create only these templates (seperate by comma's)") { |v| options[:only] = v.split(',') }
   end
 
 end

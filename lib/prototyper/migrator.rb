@@ -19,7 +19,7 @@ module Prototyper
       end
       
       # TODO make the migration code reusable for export of features
-      # TODO add support for habtm associations
+      # TODO add tests
       def self.up
         prototypes.each do |prototype|
           create_table(prototype.name.tableize) do |t|
@@ -31,6 +31,19 @@ module Prototyper
             t.timestamps
             
           end
+          
+          if prototype.habtm_associations.any?
+            prototype.habtm_associations.map(&:name).each do |other_table_name|
+              table_names = [prototype.name.tableize, other_table_name]
+              join_table = table_names.sort.join("_")
+              unless table_exists?(join_table)
+                create_table(join_table, :id => false) do |t|
+                  t.belongs_to *table_names.map(&:singularize)
+                end
+              end
+            end
+          end
+          
         end
       end
 
@@ -38,6 +51,13 @@ module Prototyper
         previous_prototypes.each do |prototype|
           table_name = prototype.name.tableize
           drop_table(table_name) if table_exists?(table_name)
+          
+          if prototype.habtm_associations.any?
+            prototype.habtm_associations.map(&:name).each do |other_table_name|
+              join_table = [table_name, other_table_name].sort.join("_")
+              drop_table(join_table) if table_exists?(join_table)
+            end
+          end
         end
       end
 

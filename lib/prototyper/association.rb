@@ -2,8 +2,8 @@ module Prototyper
   class Association
     attr_reader :name, :type, :options
 
-    SYMBOL_OPTIONS = %w(as through)
-    OTHER_OPTIONS = %W(polymorphic)
+    SYMBOL_OPTIONS = %w(as through source)
+    OTHER_OPTIONS = %W(polymorphic class_name)
     OPTIONS = SYMBOL_OPTIONS + OTHER_OPTIONS
   
     def initialize(hash)

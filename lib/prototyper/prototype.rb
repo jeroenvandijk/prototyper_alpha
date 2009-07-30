@@ -13,7 +13,9 @@ module Prototyper
                   :class_path,
                   :associations,
                   :parent_names,
-                  :attributes ]
+                  :attributes,
+                  :concerns,
+                  :prototype_options ]
 
     attr_reader *ACCESSORS
 
@@ -21,6 +23,8 @@ module Prototyper
       @namespaces   = options['namespaces']      || []
       @raw_attributes   = properties['attributes']   || []
       @raw_associations = properties['associations'] || []
+      @raw_concerns = properties['concerned_with'] || []
+      @prototype_options = (properties['options'] || {}).symbolize_keys
 
       raise "The property 'attributes' for prototype #{name} should be an array" unless @raw_attributes.is_a? Array
       raise "The property 'associations' for prototype #{name} should be an array" unless @raw_associations.is_a? Array
@@ -42,6 +46,17 @@ module Prototyper
     def attributes
       @attributes ||= @raw_attributes.map { |x| Attribute.new(*x.to_a.first) }
     end
+    
+    def prototype_options
+      @prototype_options
+    end
+    
+    # Returns all defined concerns as symbols
+    #   prototype = Prototype.new("test", "concerned_with" => ["validations", "attributes"])
+    #   prototype.concerns #=> [:validations, :attributes]
+    def concerns
+      @concerns ||= @raw_concerns.map(&:to_sym)
+    end
 
     # Returns all the associations
     def associations
@@ -51,6 +66,11 @@ module Prototyper
     def belongs_to_associations
       @belongs_to_associations ||= associations.select { |x| x.type == "belongs_to" }
     end
+    
+    def habtm_associations
+      @habtm_associations ||= associations.select { |x| x.type == "has_and_belongs_to_many" }
+    end
+    
     
     # Returns the names of the parent resources
     def parent_names

@@ -1,8 +1,5 @@
 %h1= t(".title")
   
-%table
-  %tr
-    %th attribute_names
-  = render @<%= plural_name %>
+= render :partial => "<%= plural_name %>/list", :locals => {:<%= plural_name %> => @<%= plural_name %>}
 
-%a.link_to_new{ :href => new_<%= singular_name %>_path }= t(".link_to_new")
+%a.link_to_new{ :href => new_object_path }= t(".link_to_new")

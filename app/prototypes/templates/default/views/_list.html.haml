@@ -1,0 +1,16 @@
+- placeholder_for :<%= plural_name %>, :using => <%= plural_name %> do
+  %table
+    %tr
+<% attributes.each do |attribute| -%>
+      %th= <%= %[#{class_name}.human_attribute_name "#{attribute.name}"] %>
+<% end %>
+    - <%= plural_name %>.each do |<%= singular_name %>|
+      %tr{:class => [cycle("even", "odd"), <%= singular_name %>].join(" ")}
+<% attributes.each do |attribute| -%>
+        %td= <%= "#{singular_name}.#{attribute.name}" %>
+<% end %>
+        %td.tools
+          = link_to t('.link_to_show'), <%= singular_name %>, :class => "link_to_show"
+          - if params[:action] == "index"
+            %a.link_to_edit{ :href => edit_<%= singular_name %>_path(<%= singular_name %>) }= t('.link_to_edit')
+          = link_to t('.link_to_destroy'), <%= singular_name %>, :confirm => t('.confirm_destroy'), :method => :delete, :class => 'link_to_destroy'

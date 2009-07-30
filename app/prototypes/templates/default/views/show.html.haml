@@ -1,14 +1,14 @@
 %h1= t ".title"
 
-%div[current_object]
+%div[@<%= singular_name %>]
 <% for attribute in attributes -%>
-  %p.<%= attribute.name %>
-    %strong <%= attribute.name %>
-    = h current_object.<%= attribute.name %>
+  .<%= attribute.name %>.<%= attribute.type %>
+    %span.label= <%= singular_name.classify %>.human_attribute_name("<%= attribute.name %>")
+    = @<%= singular_name %>.<%= attribute.name %>
 <% end -%>
 
-%a.link_to_edit{ :href => edit_<%= singular_name %>_path }= t(".link_to_edit")
+%a.link_to_edit{ :href => edit_<%= singular_name %>_path(@<%= singular_name %>) }= t(".link_to_edit")
 |
-= link_to t(".link_to_destroy"),<%= singular_name %>_path, :confirm => t(".confirm_destroy"), :method => :delete, :class => "link_to_destroy"
+= link_to t(".link_to_destroy"),<%= singular_name %>_path(@<%= singular_name %>), :confirm => t(".confirm_destroy"), :method => :delete, :class => "link_to_destroy"
 |
 %a.link_to_index{ :href => <%= plural_name %>_path }= t(".link_to_index")

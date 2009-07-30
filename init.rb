@@ -9,12 +9,13 @@ config.to_prepare do
   
   # Also run things only when everything has been loaded
   if config.cache_classes
+    Rails.logger.info "---------- pre-defining prototypes ----------"
     Prototyper::Base.define_classes
   else
+    Rails.logger.info "---------- removing prototypes, and waiting for missing ones ----------"
     require 'const_missing_hack'
     require 'dispatch_callback'
   end
 end
-
 
 

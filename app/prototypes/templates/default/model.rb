@@ -4,4 +4,11 @@ class <%= singular_name.classify %> < ActiveRecord::Base
 
   # Semantic attributes
   <%= semantic_attributes(attributes) %>
+
+  <% if attributes.map(&:name).include?("name") %>
+  def to_param; [id, name].join("-"); end
+  <% end %>
+    
+  <%= "concerned_with #{concerns.map(&:inspect).join(", ")}" if concerns.any? %>
+  
 end

@@ -1,198 +1,91 @@
 --- 
 models: 
-  user: 
-    associations: 
-    - notes: has_many
-    - lp_requests: has_many
-    - role: belongs_to
-    - options: 
-        through: notes
-      lp_requests: has_many
-    - options: 
-        through: notes
-      customers: has_many
-    - options: 
-        through: notes
-      link_partners: has_many
-    - options: 
-        through: notes
-      link_partners: has_many
-    - options: 
-        through: lp_requests
-      link_partners: has_many
+  blacklist: 
     attributes: 
-    - password: string
-    - email: email
-    - firstname: string
-    - lastname: string
-    - time_worked: string
+    - domain: url
   link_partner_order_member: 
     associations: 
-    - order: belongs_to
-    - link_partner: belongs_to
+    - belongs_to: link_partner
+    - belongs_to: order
+    options: 
+      paginate: true
+      per_page: 10
     attributes: 
-    - status: integer
-  category: 
+    - selected: boolean
+  search: 
     associations: 
-    - link_partners: has_many
-    - mail_templates: has_many
-    - link_partners: has_many
-    - options: 
-        through: link_partners
-      link_partners: has_many
-    - webmasters: has_many
-      options: 
-        through: link_partners
-    - options: 
-        through: link_partners
-      link_partners: has_many
-    - webmasters: has_many
-      options: 
-        through: link_partners
+    - polymorphic: true
+      belongs_to: searchable
     attributes: 
-    - name: string
-  order: 
+    - searchable_type: string
+    - query: string
+    - language: string
+    - region: string
+    - strict_language: boolean
+    - limit: integer
+    - done: boolean
+    - deep_hits: integer
+    - total_hits: integer
+    concerned_with: attributes
+  competitor: 
     associations: 
-    - customer: belongs_to
-    - link_partner_order_members: has_many
-    - options: 
-        through: link_partner_order_members
-      link_partners: has_many
-    attributes: 
-    - hours_needed: integer
-    - links_needed: integer
-    - alias: string
-    - status: integer
-    - email_from: integer
-    - email_method: integer
-    - success_percentage: integer
-    - landings_page: url
-    - search_keyword: string
-    - link_keyword: string
-  link_partner: 
-    associations: 
-    - link_partner_order_members: has_many
-    - subdomains: has_many
-    - category: belongs_to
-    - mail_template: belongs_to
-    - lp_requests: has_many
-    - notes: has_many
-    - category: belongs_to
-    - webmaster: belongs_to
-    - notes: has_many
-    - options: 
-        through: link_partner_order_members
-      orders: has_many
-    - webmasters: has_many
-      options: 
-        through: subdomains
-    - options: 
-        through: lp_requests
-      users: has_many
-    - options: 
-        through: notes
-      lp_requests: has_many
-    - options: 
-        through: notes
-      customers: has_many
-    - options: 
-        through: notes
-      users: has_many
-    - options: 
-        through: notes
-      lp_requests: has_many
-    - options: 
-        through: notes
-      customers: has_many
-    - options: 
-        through: notes
-      users: has_many
+    - has_many: order_competitor_members
+    - has_many: orders
+      through: order_competitor_members
     attributes: 
     - domain: domain
     - title: string
     - description: text
+  link_partner: 
+    associations: 
+    - has_and_belongs_to_many: competitors
+    - has_and_belongs_to_many: products
+    - has_many: link_partner_order_members
+    - has_many: orders
+      through: link_partner_order_members
+    attributes: 
+    - domain: url
+    - title: string
+    - description: text
     - page_rank: integer
-  webmaster: 
+    concerned_with: attributes
+  order: 
     associations: 
-    - subdomains: has_many
-    - link_partners: has_many
-    - options: 
-        through: subdomains
-      link_partners: has_many
-    - options: 
-        through: link_partners
-      categories: has_many
-    - options: 
-        through: link_partners
-      categories: has_many
+    - belongs_to: product
+    - class_name: Search
+      as: searchable
+      has_many: competitor_searches
+    - has_many: order_competitor_members
+    - has_many: competitors
+      through: :order_competitor_members
+    - class_name: Search
+      as: searchable
+      has_many: link_partner_searches
+    - has_many: link_partner_order_members
+    - has_many: link_partners
+      through: link_partner_order_members
     attributes: 
-    - email: email
-  subdomain: 
+    - query: string
+    - language: string
+    - region: string
+    - strict_language: boolean
+    - scraping_started: boolean
+    - scraping_done: boolean
+    - link_partners_per_competitor: integer
+    - offset_link_partners: integer
+    concerned_with: attributes
+  product: 
     associations: 
-    - link_partner: belongs_to
-    - webmaster: belongs_to
-    attributes: 
-    - url: url
-  role: 
-    associations: 
-    - users: has_many
+    - belongs_to: customer
+    - has_many: orders
     attributes: 
     - name: string
-  mail_template: 
-    associations: 
-    - link_partner: belongs_to
-    - category: belongs_to
-    attributes: 
-    - body: text
-    - subject: string
-    - title: string
-    - email_method: integer
-  note: 
-    associations: 
-    - lp_request: belongs_to
-    - customer: belongs_to
-    - link_partner: belongs_to
-    - user: belongs_to
-    - link_partner: belongs_to
-    attributes: 
-    - body: text
   customer: 
     associations: 
-    - orders: has_many
-    - notes: has_many
-    - options: 
-        through: notes
-      lp_requests: has_many
-    - options: 
-        through: notes
-      link_partners: has_many
-    - options: 
-        through: notes
-      users: has_many
-    - options: 
-        through: notes
-      link_partners: has_many
+    - has_many: products
     attributes: 
-    - name: domain
-    - email: email
-  lp_request: 
+    - name: string
+  order_competitor_member: 
     associations: 
-    - link_partner: belongs_to
-    - notes: has_many
-    - user: belongs_to
-    - options: 
-        through: notes
-      customers: has_many
-    - options: 
-        through: notes
-      link_partners: has_many
-    - options: 
-        through: notes
-      users: has_many
-    - options: 
-        through: notes
-      link_partners: has_many
-    attributes: 
-    - status: integer
-    - email_body: text
-    - response: text
+    - belongs_to: order
+    - belongs_to: competitor

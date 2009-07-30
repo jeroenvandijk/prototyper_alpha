@@ -13,6 +13,13 @@ namespace :prototyper do
     puts "Ran migrations for environment #{RAILS_ENV}"
   end
   
+  desc "Runs all seeds"
+  task :seed => :environment do
+    File.open("app/prototypes/seed.rb", 'r') {|f| eval f.read }
+    
+    puts "Seeded the #{RAILS_ENV} database"
+  end
+  
   
   
   

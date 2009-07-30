@@ -5,7 +5,7 @@ def as_symbols(list)
 end
 
 def pretty_print(associations)
-  associations.sort_by(&:name).map do |association|
+  associations.map do |association|
     "#{association.type} :#{association.name}#{association.options_string}"
   end.join("\n" + indent)
 end
@@ -13,7 +13,7 @@ end
 # Declares attributes using the semantic attributes plugin
 def semantic_attributes(attributes)
   attributes.inject([]) do |semantics, attribute|
-    semantics << %{#{attribute.name}_is_#{an attribute.meta_type}} unless NATIVE_ATTRIBUTE_TYPES.include?(attribute.meta_type)
+    semantics << %{#{attribute.name}_is_#{an attribute.meta_type}} unless attribute.native?
     semantics
   end.join("\n" + indent)
 end

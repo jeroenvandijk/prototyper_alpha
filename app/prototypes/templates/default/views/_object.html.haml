@@ -1,7 +1,0 @@
-%tr
-  %td= <%= singular_name %>.inspect
-  %td
-    %a.link_to_show{ :href => <%= singular_name %>_path(<%= singular_name %>)}= t('.link_to_show')
-  %td
-    %a.link_to_edit{ :href => edit_<%= singular_name %>_path(<%= singular_name %>) }= t('.link_to_edit')
-  %td= link_to t('.link_to_destroy'), <%= singular_name %>, :confirm => t('.confirm_destroy'), :method => :delete, :class => 'link_to_destroy'
