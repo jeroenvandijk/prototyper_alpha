@@ -20,7 +20,10 @@ module Prototyper
     
     def self.prototypes
       # TODO load all files in 'app/prototypes'
-      @@prototypes ||= read File.join(RAILS_ROOT, "app/prototypes", "linktool.yml")
+      
+      
+      
+      @@prototypes ||= read File.join(RAILS_ROOT, "app/prototypes")
     end
     
     def self.previous_prototypes

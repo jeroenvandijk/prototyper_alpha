@@ -1,3 +1,5 @@
 models:
   <%= singular_name %>:
-    # declare attributes
+    concerned_with: []
+    attributes: []
+    associations: []

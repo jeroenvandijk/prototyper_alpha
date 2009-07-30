@@ -24,7 +24,9 @@ module Prototyper
     end
     
     def set_prototypes_definition(path)
-      @prototypes_definition = YAML::load_file(path)
+      prototype_definition_files = Dir[File.join(path, "*.yml")]
+      hashes = prototype_definition_files.map{ |x| YAML::load_file(x) }
+      @prototypes_definition = hashes.inject({}) {|result, definition| result.deep_merge(definition) }
     end
     
     def previous_prototypes_definition
