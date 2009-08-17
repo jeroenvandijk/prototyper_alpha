@@ -22,15 +22,18 @@ module Prototyper
       # TODO add tests
       def self.up
         prototypes.each do |prototype|
-          create_table(prototype.name.tableize) do |t|
+          table_name = prototype.name.tableize
+          drop_table(table_name) if table_exists?(table_name)
+          
+          create_table(table_name) do |t|
             t.belongs_to *prototype.belongs_to_associations.map(&:name) if prototype.belongs_to_associations.any?
-            
+          
             prototype.attributes.each do |attribute|
               t.column attribute.name, attribute.type
             end
             t.timestamps
-            
           end
+        
           
           if prototype.habtm_associations.any?
             prototype.habtm_associations.map(&:name).each do |other_table_name|

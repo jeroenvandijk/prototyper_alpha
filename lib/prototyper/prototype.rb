@@ -23,7 +23,6 @@ module Prototyper
       @namespaces   = options['namespaces']      || []
       @raw_attributes   = properties['attributes']   || []
       @raw_associations = properties['associations'] || []
-      @raw_concerns = properties['concerned_with'] || []
       @prototype_options = (properties['options'] || {}).symbolize_keys
 
       raise "The property 'attributes' for prototype #{name} should be an array" unless @raw_attributes.is_a? Array
@@ -55,7 +54,7 @@ module Prototyper
     #   prototype = Prototype.new("test", "concerned_with" => ["validations", "attributes"])
     #   prototype.concerns #=> [:validations, :attributes]
     def concerns
-      @concerns ||= @raw_concerns.map(&:to_sym)
+      @concerns ||= Dir["app/models/#{name}_concerns/*.rb"].map{|x| File.basename(x, ".rb").to_sym }
     end
 
     # Returns all the associations

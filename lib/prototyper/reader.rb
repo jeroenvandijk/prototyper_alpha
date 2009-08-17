@@ -20,7 +20,7 @@ module Prototyper
     
     def prototypes_definition_changed?
       # prototypes_definition.diff(previous_prototypes_definition)
-      prototypes_definition != previous_prototypes_definition
+      @prototypes_definition_changed ||= prototypes_definition != previous_prototypes_definition
     end
     
     def set_prototypes_definition(path)

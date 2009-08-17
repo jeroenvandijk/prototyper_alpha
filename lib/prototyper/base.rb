@@ -54,12 +54,19 @@ module Prototyper
     
     # Used when config.cache_classes is true
     def self.define_classes
+      unexisting_tables = []
+
       prototypes.each do |prototype|
         if ActiveRecord::Migration.table_exists?(prototype.plural_name) # to prevent error when migrating from zero
           define(:type => :model, :for => prototype)
           define(:type => :controller, :for => prototype)
+          
+        else  
+          unexisting_tables << prototype.plural_name
         end
       end
+      
+      puts "Not all tables (#{unexisting_tables.to_sentence(:last_word_connector => "and")}) exist yet. Run prototyper:migrate to resolve this" if unexisting_tables.any?
       
     end
     

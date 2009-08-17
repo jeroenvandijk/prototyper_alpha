@@ -4,6 +4,8 @@ require 'prototyper/base'
 
 Prototyper::Base.init
 
+# The initializers should be prepared for helpers and dynamic generated classes (models, controllers)
+# Depending on the setting config.cache_classes class should be predefined or classes should be defined through const_missing
 config.to_prepare do
   ApplicationController.helper(PrototypesHelper)
   
